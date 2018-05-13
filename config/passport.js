@@ -25,5 +25,12 @@ User.findOne({email:email},(err,user)=>{
         return done(null,false,req.flash('loginMessage','Wrong password'));
     }
     return done(null,user);
-})
-}))
+});
+}));
+
+exports.isAuthenticated((req,res,next)=>{
+    if (req.isAuthenticated()){
+    return next();
+}
+res.redirect('/login')
+});
