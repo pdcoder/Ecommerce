@@ -1,9 +1,9 @@
-var router = require('express').Router;
+var router = require('express').Router();
 var User = require('../models/user');
 
 
 router.get('/signup',(req,res,next)=>{
-    res.render('home');
+    res.render('signup');
 });
 
 
@@ -15,7 +15,7 @@ user.password = req.body.password;
 
 User.findOne({email: req.body.email}, (err,existinguser)=>{
     if(existinguser){
-    console.log(req.body.email + " already existis ");
+req.flash('errors','Account with that email address already exists');
     }
     else{
 user.save((err,user)=>{

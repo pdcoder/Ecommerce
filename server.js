@@ -5,7 +5,11 @@ var bodyp = require('body-parser');
 var User = require('./models/user');
 var ejs = require('ejs');
 var engine = require('ejs-mate');
-var router = require('./routes/user');
+var routes = require('./routes/user');
+var session = require('express-session');
+var cookie = require('cookie-parser');
+var flash= require('express-flash');
+var MongoStore = require('mongo-connect')(session);
 require('./config/keys');
 
 
@@ -15,22 +19,17 @@ app.use(morgan('dev'));
 app.use(bodyp.json());
 app.set('view engine', 'ejs');
 app.engine('ejs', engine);
-
-app.post('/create_user',(req,res)=>{
-var user = new User();
-user.profile.name = req.body.name;
-user.password = req.body.password;
-user.email = req.body.email;
-
-user.save((err)=>{
-    if (err) return next(err);
-    res.json('Successfully created record');
-
-})
-});
+app.use(cookie());
+app.use(session({
+    resave:true,
+    saveUninitialized:true,
+    secret:"pd@123",
+    store: new MongoStore({url: 'mongodb://pdcoder:pdcoder@ds111895.mlab.com:11895/pdcoder',autoReconnect:true})
+}));
+app.use(flash());
 
 
-app.get('/',(req,res)=>{
-res.render('home')});
+app.use(routes);
+
 
 app.listen(4000);
