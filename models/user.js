@@ -14,7 +14,7 @@ var UserSchema = new Schema({
     history:[
         {
             date: Date,
-            paid: {type:Number, default:}
+            paid: {type:Number, default:0}
         }
     ]
 });

@@ -10,9 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.6.1",
+    "ejs-mate": "^2.3.0",
     "express": "^4.16.3",
+    "express-flash": "0.0.2",
     "mongoose": "^5.1.0",
     "morgan": "^1.9.0",
-    "nodemon": "^1.17.4"
+    "nodemon": "^1.17.4",
+    "session": "^0.1.0"
   }
 }
