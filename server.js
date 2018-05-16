@@ -10,12 +10,14 @@ var cookie = require('cookie-parser');
 var flash= require('express-flash');
 var MongoStore = require('connect-mongo')(session);
 
-
-require('./config/keys'); 
+var cartlength = require('./middlewares/middlewares');
+var secret = require('./config/keys'); 
 var Category = require('./models/category');
 var routesuser = require('./routes/user');
 var routesadmin = require('./routes/admin');
 var User = require('./models/user');
+var main = require('./routes/main');
+var apiroutes = require('./api/api');
 
 var app = express();
 app.use(express.static(__dirname +'/public'));
@@ -27,20 +29,33 @@ app.use(cookie());
 app.use(session({
     resave:true,
     saveUninitialized:true,
-    secret:"pd@123",
-    store: new MongoStore({url: 'mongodb://pdcoder:pdcoder@ds111895.mlab.com:11895/pdcoder',autoReconnect:true})
+    secret:secret.secret,
+    store: new MongoStore({url: secret.database,autoReconnect:true})
 }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(routesuser);
 app.use(routesadmin);
+app.use('/api',apiroutes);
+app.use(main);
 
 app.use((req,res,next)=>{
-    Category.find({},(err,categories))
-})
+    res.locals.user = req.user;
+});
+app.use(cartlength);
+app.use((req,res,next)=>{
+    Category.find({},(err,categories)=>{
+        if(err) return next(err);
+       return  res.locals.categories = categories;
+        next();
+    });
+});
 
 
 
 
-app.listen(4000);
+app.listen(4400,(err)=>{
+    if (err) throw err;
+    console.log("server running");
+});

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
+var crypto = require('crypto');
 var {Schema} = mongoose;
 
 var UserSchema = new Schema({
@@ -14,7 +15,8 @@ var UserSchema = new Schema({
     history:[
         {
             date: Date,
-            paid: {type:Number, default:0}
+            paid: {type:Number, default:0},
+            item: { type:Schema.Types.ObjectId, ref:'Product'}
         }
     ]
 });
@@ -37,7 +39,14 @@ next();
 /*Compare password*/
 UserSchema.methods.comparePassword = (password)=>
 {
-return bcrypt.compareSync(password,hash.password);
+return bcrypt.compareSync(password,this.password);
+}
+
+UserSchema.methods.gravatar = (size)=>{
+if (this.size) size = 200;
+if(!this.email) return 'http://gravatar.com/avatar/?s' + size + '&d=retro';
+var md5 = crypto.createHash('md5').update(this.email).digest('hex');
+return 'http://gravatar.com/avatar/' + md5 + '?s=' + size + '&d=retro';
 }
 
 module.exports = mongoose.model('User',UserSchema);
